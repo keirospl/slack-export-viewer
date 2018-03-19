@@ -70,7 +70,7 @@ class Message(object):
                     message.append(text)
 
         file_link = self._message.get("file", {})
-		# we would like to show file if it is image type
+        # we would like to show file if it is image type
         if file_link and "url_private" in file_link and "mimetype" in file_link \
            and file_link["mimetype"].split('/')[0] == 'image':
             html = "<br><a href=\"{url}\"><img src=\"{url}\" height=\"200\"></a><br>" \

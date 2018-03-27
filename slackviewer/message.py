@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import datetime
 import logging
 import re
+import os
 
 import emoji
 import markdown2
@@ -86,9 +87,13 @@ class Message(object):
     @property
     def img(self):
         try:
-            return self.__USER_DATA[self._message["user"]]["profile"]["image_72"]
+            size = "72"
+            url = self.__USER_DATA[self._message["user"]]["profile"]["image_72"]
+            filename, file_extension = os.path.splitext(url)
+            file_to_save = os.path.join("avatars", size, "{}_{}{}".format(self._message["user"], size, file_extension))
+            return file_to_save
         except KeyError:
-            return ""
+            return "avatars/72/U11656PFZ_72.png"
 
     @property
     def id(self):

@@ -5,6 +5,10 @@ import click
 import flask
 
 from slackviewer.app import app
+
+from slackviewer.app import channel_name
+import urllib.request
+
 from slackviewer.archive import \
     extract_archive, \
     get_empty_dm_names, \
@@ -96,3 +100,41 @@ def main(port, archive, ip, no_browser, test, debug):
             host=ip,
             port=port
         )
+        
+        
+    #download code
+    
+    avatar_dir = "avatars"
+    if not os.path.exists(avatar_dir):
+        os.makedirs(avatar_dir)
+    
+    users = get_users(extract_archive(archive))
+    
+    sizes = ["24", "32", "48", "72", "192", "512"]
+    for size in sizes:
+        if not os.path.exists(os.path.join(avatar_dir, size)):
+            os.makedirs(os.path.join(avatar_dir, size))
+        
+        for user in users:
+            url = users[user]["profile"]["image_{}".format(size)]
+            if url != "":
+                filename, file_extension = os.path.splitext(url)
+                file_to_save = os.path.join(avatar_dir, size, "{}_{}{}".format(user, size, file_extension))
+                if not os.path.exists(file_to_save):
+                    urllib.request.urlretrieve(url, file_to_save)
+            print("{} {}".format(size, user))
+    
+    
+    
+    name = "thelunchers"
+    app1 = flask.Flask(
+        __name__,
+        template_folder="templates",
+        static_folder="static"
+    )
+    app1.config["SERVER_NAME"] = "test"
+    with app1.app_context():
+        with open('out.html', 'w', encoding="utf-8") as file:
+            file.write(channel_name(name))
+    #for channel in channels:
+        #print(channel)

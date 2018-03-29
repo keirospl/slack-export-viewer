@@ -1,0 +1,44 @@
+.highlighted {
+     background-color:yellow;
+ }
+ .highlight {
+     background-color: #fff34d;
+     -moz-border-radius: 5px;
+     /* FF1+ */
+     -webkit-border-radius: 5px;
+     /* Saf3-4 */
+     border-radius: 5px;
+     /* Opera 10.5, IE 9, Saf5, Chrome */
+     -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+     /* FF3.5+ */
+     -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+     /* Saf3.0+, Chrome */
+     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+     /* Opera 10.5+, IE 9.0 */
+ }
+ .highlight {
+     padding:1px 4px;
+     margin:0 -4px;
+ }
+ 
+ 
+  button{
+    text-decoration:none;
+    color:#000000;
+   }
+   button.button{
+    background-color:#ffffff;
+    border:1px solid #660000;
+    border-radius:5px;
+    color:#000;
+    margin-right:1px;
+    padding: 1px 3px 1px 3px;
+   }
+   
+   .searchContend_h {
+     position: fixed;
+	 z-index: 1;
+	 background-color:#f1f2f4;
+	 padding: 10px 10px 10px 10px;
+	 right: 0;
+   }

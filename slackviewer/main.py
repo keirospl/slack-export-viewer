@@ -30,6 +30,7 @@ def envvar(name, default):
 
     :param str name: Name of environment variable
     :param default: Default value to return in case it isn't defined
+    :param default: Default value to return in case it isn't defined
     """
     return lambda: os.environ.get(name, default)
 
@@ -108,7 +109,9 @@ def main(port, archive, ip, no_browser, test, debug):
     if not os.path.exists(avatar_dir):
         os.makedirs(avatar_dir)
     
-    users = get_users(extract_archive(archive))
+    path = extract_archive(archive)
+    
+    users = get_users(path)
     
     sizes = ["24", "32", "48", "72", "192", "512"]
     for size in sizes:
@@ -122,19 +125,23 @@ def main(port, archive, ip, no_browser, test, debug):
                 file_to_save = os.path.join(avatar_dir, size, "{}_{}{}".format(user, size, file_extension))
                 if not os.path.exists(file_to_save):
                     urllib.request.urlretrieve(url, file_to_save)
-            print("{} {}".format(size, user))
+                    print("{} {}".format(size, user))
     
     
     
-    name = "thelunchers"
     app1 = flask.Flask(
         __name__,
         template_folder="templates",
         static_folder="static"
     )
     app1.config["SERVER_NAME"] = "test"
-    with app1.app_context():
-        with open('out.html', 'w', encoding="utf-8") as file:
-            file.write(channel_name(name))
-    #for channel in channels:
-        #print(channel)
+    names = ["thelunchers", "secure4questions4dev"]
+    channels = get_channels(path)
+    for channel_id in channels:
+        name = channels[channel_id]["name"]
+        #if name == "hadoop":
+        #    continue
+        print("CHANNEL: {}".format(name))
+        with app1.app_context():
+            with open("{}.aspx".format(name), 'w', encoding="utf-8") as file:
+                file.write(channel_name(name))

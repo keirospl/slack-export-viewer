@@ -45,7 +45,7 @@ def compile_channels(path, user_data, channel_data):
         for day in sorted(day_files):
             with io.open(os.path.join(path, day), encoding="utf8") as f:
                 day_messages = json.load(f)
-                messages.extend([Message(user_data, channel_data, d) for d in
+                messages.extend([Message(user_data, channel_data, d, channel) for d in
                                  day_messages])
         chats[channel] = messages
     return chats

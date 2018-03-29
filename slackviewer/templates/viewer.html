@@ -3,207 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>Slack Export - #{{ name }}</title>
-    <link rel=stylesheet type=text/css
-          href="viewer.css">
-		  
-		  
- <script type="text/javascript" src="https://code.jquery.com/jquery-1.9.1.js"></script>
- 
-
-
-<script type="text/javascript">//<![CDATA[
-$(window).load(function(){
-function searchAndHighlight(searchTerm, selector) {
-    if (searchTerm) {
-        //var wholeWordOnly = new RegExp("\\g"+searchTerm+"\\g","ig"); //matches whole word only
-        //var anyCharacter = new RegExp("\\g["+searchTerm+"]\\g","ig"); //matches any word with any of search chars characters
-        var selector = selector || "#realTimeContents"; //use body as selector if none provided
-        var searchTermRegEx = new RegExp(searchTerm, "ig");
-        var matches = $(selector).text().match(searchTermRegEx);
-        if (matches != null && matches.length > 0) {
-            $('.highlighted').removeClass('highlighted'); //Remove old search highlights  
-
-            //Remove the previous matches
-            $span = $('#realTimeContents span.match');
-            $span.replaceWith($span.html());
-
-    if (searchTerm === "&") {
-        searchTerm = "&amp;";
-        searchTermRegEx = new RegExp(searchTerm, "ig");
-    }
-            $(selector).html($(selector).html().replace(searchTermRegEx, "<span class='match'>" + searchTerm + "</span>"));
-            $('.match:first').addClass('highlighted');
-
-            var i = 0;
-
-            $('.next_h').off('click').on('click', function () {
-                i++;
-
-                if (i >= $('.match').length) i = 0;
-
-                $('.match').removeClass('highlighted');
-                $('.match').eq(i).addClass('highlighted');
-                
-				
-				$(window).scrollTop($('.match').eq(i).position().top);
-            });
-            $('.previous_h').off('click').on('click', function () {
-
-                i--;
-
-                if (i < 0) i = $('.match').length - 1;
-
-                $('.match').removeClass('highlighted');
-                $('.match').eq(i).addClass('highlighted');
-                
-				
-				$(window).scrollTop($('.match').eq(i).position().top);
-            });
-
-
-
-
-            if ($('.highlighted:first').length) { //if match found, scroll to where the first one appears
-                $(window).scrollTop($('.highlighted:first').position().top);
-            }
-            return true;
-        }
-    }
-    return false;
-}
-
-$(document).on('click', '.searchButtonClickText_h', function (event) {
-
-    $(".highlighted").removeClass("highlighted");
-    if (!searchAndHighlight($('.textSearchvalue_h').val())) {
-        alert("No results found");
-    }
-
-
-});
-});//]]> 
-
-</script>
-
- 
-   <style type="text/css">
-     .highlighted {
-     background-color:yellow;
- }
- .highlight {
-     background-color: #fff34d;
-     -moz-border-radius: 5px;
-     /* FF1+ */
-     -webkit-border-radius: 5px;
-     /* Saf3-4 */
-     border-radius: 5px;
-     /* Opera 10.5, IE 9, Saf5, Chrome */
-     -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
-     /* FF3.5+ */
-     -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
-     /* Saf3.0+, Chrome */
-     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
-     /* Opera 10.5+, IE 9.0 */
- }
- .highlight {
-     padding:1px 4px;
-     margin:0 -4px;
- }
- 
- 
-  button{
-    text-decoration:none;
-    color:#000000;
-   }
-   button.button{
-    background-color:#ffffff;
-    border:1px solid #660000;
-    border-radius:5px;
-    color:#000;
-    margin-right:1px;
-    padding: 1px 3px 1px 3px;
-   }
-   
-   .searchContend_h {
-     position: fixed;
-	 z-index: 1;
-	 background-color:#f1f2f4;
-	 padding: 10px 10px 10px 10px;
-	 right: 0;
-   }
-
-  </style>
+    <link rel="stylesheet" type="text/css" href="static/viewer.css" />
+	<script type="text/javascript" src="static/jquery-1.9.1.js"></script>
+	<script type="text/javascript"  src="static/search.js"></script>
+	<link rel="stylesheet" type="text/css" href="static/search.css" />
 </head>
 <body>
-
-   <div class="searchContend_h">
-   
-    
-            <input name="text-12" id="text-12" value="" type="text" class="textSearchvalue_h">
-    
+	<div class="searchContend_h">
+        <input name="text-12" id="text-12" value="" type="text" class="textSearchvalue_h">
         <button type="button" class="searchButtonClickText_h button">Search</button>
+		<button type="button" class="next_h button">Next</button>
+		<button type="button" class="previous_h button">Previous</button>
+	</div>        	
 
-       <button type="button" class="next_h button">Next</button>
-
-        <button type="button" class="previous_h button">Previous</button>
-
-</div>        
-		
-
-<div id="realTimeContents" class="messages">
-    {% for message in messages %}
-        <div class="message-container">
-          <div id="{{ message.id }}">
-            <img src="{{ message.img }}"/>
-            <div class="message">
-                <div class="username">{{ message.username }}</div>
-                <a href="#{{ message.id}}"><div class="time">{{ message.time }}</div></a>
-                <div class="msg">{{ message.msg|safe }}</div>
-            </div>
-          </div>
-        </div>
-        <br/>
-    {% endfor %}
-</div>
-
-<script>
-(function() {
-  var sidebar = document.querySelector('#sidebar');
-  var selected = document.querySelector('.active');
-  sidebar.scrollTop = selected.offsetTop - 200;
-
-  // make dropdown from channel title
-  var channel_title = document.querySelector("#channel-title");
-  var channel_dropdown = document.querySelector("#channel-list");
-  channel_title.addEventListener('click', function() {
-    channel_title.classList.toggle('arrow');
-    channel_dropdown.classList.toggle('close');
-  });
-
-  // make dropdown from group title
-  var group_title = document.querySelector("#group-title");
-  var group_dropdown = document.querySelector("#group-list");
-  group_title.addEventListener('click', function() {
-    group_title.classList.toggle('arrow');
-    group_dropdown.classList.toggle('close');
-  });
-
-  // make dropdown from dm title
-  var dm_title = document.querySelector("#dm-title");
-  var dm_dropdown = document.querySelector("#dms-list");
-  dm_title.addEventListener('click', function() {
-    dm_title.classList.toggle('arrow');
-    dm_dropdown.classList.toggle('close');
-  });
-
-  // make dromdown from group dm title
-  var mpim_title = document.querySelector("#mpim-title");
-  var mpim_dropdown = document.querySelector("#mpims-list");
-  mpim_title.addEventListener('click', function() {
-    mpim_title.classList.toggle('arrow');
-    mpim_dropdown.classList.toggle('close');
-  });
-})()
-</script>
+	<div id="realTimeContents" class="messages">
+		{% for message in messages %}
+			<div class="message-container">
+			<div id="{{ message.id }}">
+				<img class="headshot" src="{{ message.img }}"/>
+				<div class="message">
+					<div class="username">{{ message.username }}</div>
+					<a href="#{{ message.id}}"><div class="time">{{ message.time }}</div></a>
+					<div class="msg">{{ message.msg|safe }}</div>
+				</div>
+			</div>
+			</div>
+			<br/>
+		{% endfor %}
+	</div>
 </body>
 </html>

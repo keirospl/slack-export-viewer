@@ -8,12 +8,15 @@ import os
 import emoji
 import markdown2
 
+import urllib.request
+
 
 class Message(object):
-    def __init__(self, USER_DATA, CHANNEL_DATA, message):
+    def __init__(self, USER_DATA, CHANNEL_DATA, message, channel_name):
         self.__USER_DATA = USER_DATA
         self.__CHANNEL_DATA = CHANNEL_DATA
         self._message = message
+        self._channel_name = channel_name
 
     ##############
     # Properties #
@@ -70,13 +73,49 @@ class Message(object):
                     text = self._render_text(att["text"].strip())
                     message.append(text)
 
-        file_link = self._message.get("file", {})
-        # we would like to show file if it is image type
-        if file_link and "url_private" in file_link and "mimetype" in file_link \
-           and file_link["mimetype"].split('/')[0] == 'image':
-            html = "<br><a href=\"{url}\"><img src=\"{url}\" height=\"200\"></a><br>" \
-                   .format(url=file_link["url_private"])
-            message.append(html)
+        if self._message.get('subtype', None) == 'file_share':
+            thefile = self._message['file']
+            minetype = thefile['mimetype']
+            if minetype.split('/')[0] == 'image':
+                isimage = True
+            else:
+                isimage = False
+            url = thefile['url_private']
+            
+            file_to_save = url
+            
+            if not thefile['is_external']:
+                url_download = thefile['url_private_download']
+            
+                #download file
+            
+                if not os.path.exists("files"):
+                    os.makedirs("files")
+            
+                if not os.path.exists(os.path.join("files", self._channel_name)):
+                    os.makedirs(os.path.join("files", self._channel_name))
+        
+                filename, file_extension = os.path.splitext(thefile['name'])
+                if file_extension is None or file_extension == "" or file_extension == ".(null)":
+                    file_to_save = os.path.join("files", self._channel_name, "{}.{}".format(thefile['id'], thefile['filetype']))
+                else:
+                    file_to_save = os.path.join("files", self._channel_name, "{}{}".format(thefile['id'], file_extension))
+                if not os.path.exists(file_to_save):
+                    urllib.request.urlretrieve(url_download, file_to_save)
+                    print("{}".format(file_to_save))
+            
+                #download file
+            
+            message.append('<a href="{}">Download File: {}</a>'.format(file_to_save, thefile['name']))
+
+            if isimage:
+                message.append('<img class="file" src="%s">' % file_to_save)
+
+        if self._message.get('subtype', None) == 'file_comment':
+            comment = self._message['comment']
+            comment_text = comment['comment']
+            #message.append(self._render_text(comment_text))
+            message.append('<br /> %s' % comment_text)
 
         if message:
             if not message[0].strip():

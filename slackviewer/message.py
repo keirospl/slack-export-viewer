@@ -106,7 +106,7 @@ class Message(object):
             
                 #download file
             
-            message.append('<a href="{}">Download File: {}</a>'.format(file_to_save, thefile['name']))
+            message.append('<a href="{}" target="_blank">Download File: {}</a>'.format(file_to_save, thefile['name']))
 
             if isimage:
                 message.append('<img class="file" src="%s">' % file_to_save)

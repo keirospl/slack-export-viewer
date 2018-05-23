@@ -119,7 +119,9 @@ def main(port, archive, ip, no_browser, test, debug):
             os.makedirs(os.path.join(avatar_dir, size))
         
         for user in users:
-            url = users[user]["profile"]["image_{}".format(size)]
+            url = ""
+            if "image_{}".format(size) in users[user]["profile"].keys():
+                url = users[user]["profile"]["image_{}".format(size)]
             if url != "":
                 filename, file_extension = os.path.splitext(url)
                 file_to_save = os.path.join(avatar_dir, size, "{}_{}{}".format(user, size, file_extension))
